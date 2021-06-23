@@ -23,7 +23,6 @@ Menu, Tray, Add, Reload, ReloadScript
 Menu, tray, Add, Open Settings, LaunchSettings
 Menu, Tray, Add, Close, CloseScript
 Menu, tray, tip, ClickCountR - by TimWalsh ; Custom traytip
-Menu, Tray, Icon, %A_ScriptDir%\icon.ico
 
 Global guiXPos := 0
 Global guiYPos := 0
