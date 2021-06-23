@@ -20,7 +20,7 @@ GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExi
 
 Menu, Tray, NoStandard
 Menu, Tray, Add, Reload, ReloadScript
-Menu, tray, Add, Open Settings, LaunchSettings
+Menu, tray, Add, Open Settings, SettingsScript
 Menu, Tray, Add, Close, CloseScript
 Menu, tray, tip, ClickCountR - by TimWalsh ; Custom traytip
 
@@ -33,19 +33,25 @@ Global flaskCount := 0
 Global weaponSwap := 0
 Global skillCount := 0
 
+Global strMouseButtons
+Global strHotkeyVarNames
+Global strHotkeyDefaults
+Global strHotkeyControl
+Global strModifiers
+
 Gosub, loadData 
+Gosub, LoadSettings
+Sleep, 100
 if (leftClick > 0) {
-    Gosub, LaunchSettings
-    Gosub, ButtonSave ; Skip the settings if already configured
-} else {
-    Gosub, LaunchSettings
+    Gui, GUI_Settings:Hide ; skip settings after first usage
+    Gosub, ButtonSave
 }
 Gosub, CreateGUI
 Sleep, 100
 Gosub, UpdateGUI
 return
 
-LaunchSettings:
+LoadSettings:
     SplitPath, A_ScriptName, , , , strIniFilename
     strIniFilename := strIniFilename . ".ini"
     strIniPathFilename := A_ScriptDir . "\" . strIniFilename
@@ -85,80 +91,82 @@ LaunchSettings:
     arrDescriptions18 := "(eg. X)"
     
     ; Build Gui title
-    Gui, Font, s8 w700
-    Gui, Add, Text, x5 y10, ClickCountR 
-    Gui, Font
+    Gui, GUI_Settings:Font, s8 w700
+    Gui, GUI_Settings:Add, Text, x5 y10, ClickCountR 
+    Gui, GUI_Settings:Font
     
     ; Build Hotkey gui rows
     loop, % arrIniKeyNames%0%
     {
         IniRead, arrHotkeyVarNames%A_Index%, %strIniPathFilename%, Global, % arrIniKeyNames%A_Index%, % arrHotkeyDefaults%A_Index%
-        SplitHotkey(arrHotkeyVarNames%A_Index%, strMouseButtons
-            , strModifiers%A_Index%, strKey%A_Index%, strMouseButton%A_Index%, strMouseButtonsWithDefault%A_Index%)
+        SplitHotkey(arrHotkeyVarNames%A_Index%, strMouseButtons, strModifiers%A_Index%, strKey%A_Index%, strMouseButton%A_Index%, strMouseButtonsWithDefault%A_Index%)
         GuiHotkey(A_Index)
     }
     ; Add footer
-    Gui, Add, Text
-    Gui, Add, Button,x220 w100 h50 vbtnSave gButtonSave, Save Keybinds
+    Gui, GUI_Settings:Add, Text
+    Gui, GUI_Settings:Add, Button,x220 w100 h50 vbtnSave gButtonSave, Save Keybinds
     GuiControl, Focus, btnSave
-    Gui, +AlwaysOnTop
-    Gui, Show
+    Gui, GUI_Settings:+AlwaysOnTop
+    Gui, GUI_Settings:Show
 return
- 
+    
+
 ; Row Builder
 GuiHotkey(intIndex)
 {
 	global
 	; Headings
 	if (intIndex == 1) { ; 1 is the first index in AHK (why?)
-	    Gui, New,,ClickCountR Options
-	    Gui, Font, s8 w700
-        Gui, Add, Text, yp x98 w25 center, Shift
-        Gui, Add, Text, yp x+11 w25 center, Ctrl
-        Gui, Add, Text, yp x+10 w25 center, Alt
-        Gui, Add, Text, yp x+10 w100 center, Keyboard
-        Gui, Add, Text, yp x+30 w80 center, Mouse
+	    Gui, GUI_Settings:New,,ClickCountR Options
+	    Gui, GUI_Settings:Font, s8 w700
+        Gui, GUI_Settings:Add, Text, yp x98 w25 center, Shift
+        Gui, GUI_Settings:Add, Text, yp x+11 w25 center, Ctrl
+        Gui, GUI_Settings:Add, Text, yp x+10 w25 center, Alt
+        Gui, GUI_Settings:Add, Text, yp x+10 w100 center, Keyboard
+        Gui, GUI_Settings:Add, Text, yp x+30 w80 center, Mouse
     }
     if (intIndex <= #ctrls) { 
-        Gui, Font
-        Gui, Add, Text, x5 y+9 w90 right, % arrTitles%intIndex%
-        Gui, Add, CheckBox, yp x+10 vblnShift%intIndex%, %A_Space%
+        Gui, GUI_Settings:Font
+        Gui, GUI_Settings:Add, Text, x5 y+9 w90 right, % arrTitles%intIndex%
+        Gui, GUI_Settings:Add, CheckBox, yp x+10 vblnShift%intIndex%, %A_Space%
         
         GuiControl, , blnShift%intIndex%, % InStr(strModifiers%intIndex%, "+") ? 1 : 0
-        Gui, Add, CheckBox, yp x+10 vblnCtrl%intIndex%, %A_Space%
+        Gui, GUI_Settings:Add, CheckBox, yp x+10 vblnCtrl%intIndex%, %A_Space%
         GuiControl, , blnCtrl%intIndex%, % InStr(strModifiers%intIndex%, "^") ? 1 : 0
-        Gui, Add, CheckBox, yp x+10 vblnAlt%intIndex%, %A_Space%
+        Gui, GUI_Settings:Add, CheckBox, yp x+10 vblnAlt%intIndex%, %A_Space%
         GuiControl, , blnAlt%intIndex%, % InStr(strModifiers%intIndex%, "!") ? 1 : 0
-        Gui, Add, Hotkey, yp x+10 w100 vstrKey%intIndex% gHotkeyChanged
+        Gui, GUI_Settings:Add, Hotkey, yp x+10 w100 vstrKey%intIndex% gHotkeyChanged
         GuiControl, , strKey%intIndex%, % strKey%intIndex%
-        Gui, Add, Text, yp x+5, %A_Space%or
-        Gui, Add, DropDownList, yp x+10 w80 vstrMouse%intIndex% gMouseChanged, % strMouseButtonsWithDefault%intIndex%
-        Gui, Add, Text, yp x+5 w100, % arrDescriptions%intIndex%
+        Gui, GUI_Settings:Add, Text, yp x+5, %A_Space%or
+        Gui, GUI_Settings:Add, DropDownList, yp x+10 w80 vstrMouse%intIndex% gMouseChanged, % strMouseButtonsWithDefault%intIndex%
+        Gui, GUI_Settings:Add, Text, yp x+5 w100, % arrDescriptions%intIndex%
 	} else {
-        Gui, Add, Text
-	    Gui, Font, s8 w700
-	    Gui, Add, Text, x5 y+9 w250 center vXLabel, X position
-	    Gui, Add, Text, x+20 yp w250 center vYLabel, Y position
+        Gui, GUI_Settings:Add, Text
+	    Gui, GUI_Settings:Font, s8 w700
+	    Gui, GUI_Settings:Add, Text, x5 y+9 w250 center vXLabel, X position
+	    Gui, GUI_Settings:Add, Text, x+20 yp w250 center vYLabel, Y position
 	    screenWidth := A_screenWidth-50
 	    screenHeight := A_screenHeight-100
-	    Gui, Add, Slider, x5 y+9 w250 right ToolTipBottom vXposSlide gSubXpos Range0-%ScreenWidth% , %guiXPos%
-	    Gui, Add, Slider, x+20 yp w250 right ToolTipBottom vYposSlide gSubYpos Range0-%ScreenHeight% , %guiYPos%
+	    Gui, GUI_Settings:Add, Slider, x5 y+9 w250 right ToolTipBottom vXposSlide gSubXpos Range0-%ScreenWidth% , %guiXPos%
+	    Gui, GUI_Settings:Add, Slider, x+20 yp w250 right ToolTipBottom vYposSlide gSubYpos Range0-%ScreenHeight% , %guiYPos%
 	}
 	return
 }
 
 ButtonSave:
-    Gui, Submit
+    Gui, GUI_Settings:Submit
     strIniVarNames := "PrimarySkill1|PrimarySkill2|PrimarySkill3|Skill1|Skill2|Skill3|Skill4|Skill5|Skill6|Skill7|Skill8|Skill9|Skill10|Flask1|Flask2|Flask3|Flask4|Flask5|WeaponSwap"
     StringSplit, arrIniVarNames, strIniVarNames, |
     
     Loop, % arrIniVarNames%0%
     {
-        strHotkey%A_Index% := Trim(strKey%A_Index% . strMouse%A_Index%)
+        if (strKey%A_Index% = "")  
+           strHotkey%A_Index% := strMouse%A_Index%
+        else {
+            strHotkey%A_Index% := strKey%A_Index%
+        }
         if StrLen(strHotkey%A_Index%)
         {
-            if (blnWin%A_Index%)
-                strHotkey%A_Index% := "#" . strHotkey%A_Index%
             if (blnAlt%A_Index%)
                 strHotkey%A_Index% := "!" . strHotkey%A_Index%
             if (blnShift%A_Index%)
@@ -176,19 +184,13 @@ return
 HotkeyChanged:
     strHotkeyControl := A_GuiControl
     strHotkey := %strHotkeyControl%
-    
     if !StrLen(strHotkey)
         return
     
     SplitModifiersFromKey(strHotkey, strModifiers, strKey)
-    
-    if StrLen(strModifiers)
-        GuiControl, , %A_GuiControl%, None
-    else
-    {
-        StringReplace, strMouseControl, strHotkeyControl, Key, Mouse
-        GuiControl, ChooseString, %strMouseControl%, %A_Space%
-    }
+    GuiControl, ChooseString, %strMouseControl%, %A_Space%
+    StringReplace, strMouseControl, strHotkeyControl, Key, Mouse ; get the matching mouse dropdown var
+
 return
 
 MouseChanged:
@@ -341,6 +343,10 @@ LoadData:
 return
 
 ; Menu Bindings
+SettingsScript:
+    Gui, GUI_Settings:Show
+return
+
 ReloadScript:
     Reload
 return
