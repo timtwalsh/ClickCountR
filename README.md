@@ -2,6 +2,7 @@
 An AHK Script to track and display your clicks, skill, flask and weapon swap usage in Path of Exile.
 
 Supports Billions of clicks, good luck!
+
 ![image](https://user-images.githubusercontent.com/37277452/123043061-1840f000-d43b-11eb-8821-ef79b34fad6c.png)
 
 # Installation
