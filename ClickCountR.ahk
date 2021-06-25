@@ -5,7 +5,6 @@ SetWorkingDir %A_ScriptDir%
 #SingleInstance force
 SetBatchLines, -1
 ListLines, Off
-#SingleInstance force
 #KeyHistory 0
 #ctrls = 19
 
@@ -34,21 +33,10 @@ Global skillCount := 0
 Global movable := 0
 
 Gosub,LoadData 
-Sleep, 100
+Sleep, 10
 Gosub, CreateGUI
-Sleep, 100
+Sleep, 10
 Gosub, UpdateGUI
-return
-
-; Position
-SubXpos:
-    guiXPos :=  % XposSlide
-    Gosub, CreateGui
-return
-
-SubYpos:
-    guiYPos :=  % YposSlide
-    Gosub, CreateGui
 return
 
 ; Creates and shows the GUI
@@ -73,10 +61,10 @@ CreateGUI:
     Gui, Color, %BGColor%
     WinSet, TransColor, FF00FF
     Gui, +Parent%PoEWindowHwnd%
-	if (movable = 1)
+	if (movable = 1) {
 	    Gui, Add, Picture, BackgroundTrans x33 y70 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
+    }
     Gui, Show, X%guiXPos% Y%guiYPos%
-;    Gui, +Parent%1%
     SetTimer, Timeout, 1000
 return
 
@@ -128,7 +116,7 @@ NumberText(number)
 SaveData:
     dataOut := leftClick . "," . rightClick . "," . middleClick . "," . flaskCount . "," . weaponSwap . "," . skillCount . "," . guiXPos . "," . guiYPos . "," . loadedProdPath
     file := A_ScriptDir . "\clickData.csv"
-    fileOut := FileOpen(file, "w")
+    fileOut := FileOpen(file, "rw")
     if !IsObject(fileOut)
     {
         MsgBox Can't open "%FileName%" for writing.
@@ -141,23 +129,18 @@ return
 LoadData:
     FileRead, FILE_CONTENTS, clickData.csv
     inData := StrSplit(FILE_CONTENTS, ",")
-    leftClick := inData[1] + 0
-    rightClick := inData[2] + 0
-    middleClick := inData[3] + 0
-    flaskCount := inData[4] + 0
-    weaponSwap := inData[5] + 0
-    skillCount := inData[6] + 0
-    guiXPos := inData[7] + 0
-    guiYPos := inData[8] + 0
-    guiYPos := inData[8] + 0
-    filePathText := inData[9]
-    if (guiXPos = "") { ; we must have a default x/ypos if one isn't loaded
-        guiXPos := 0
-        guiYPos := 0
-    } 
-    
-    if (filePathText = "") ; if the user hasn't already had production_config located 
-    {
+    if (inData.length() > 0) { ; load values if file data is read
+        leftClick := 0 + inData[1]
+        rightClick := 0 + inData[2]
+        middleClick := 0 + inData[3]
+        flaskCount := 0 + inData[4]
+        weaponSwap := 0 + inData[5]
+        skillCount := 0 + inData[6]
+        guiXPos := 0 + inData[7]
+        guiYPos := 0 + inData[8]
+        filePathText := inData[9]
+    }
+    if (filePathText = "") { ; if the user hasn't already had production_config located 
         ; Path should be - %USERPROFILE%\Documents\My Games\Path of Exile\
         strProdConfigFileName = production_Config.ini
         profile = %USERPROFILE%
@@ -166,8 +149,7 @@ LoadData:
     FileRead, prodConfigData, % filePathText
     loadedProdPath := filePathText
     ;check if file loaded, if not ask user to locate
-    if ErrorLevel
-    {
+    if ErrorLevel {
         msgbox, "Can't automatically locate production_Config.ini`nShould be in Documents\My Games\Path of Exile"
         production_Config.ini := profile . "\Documents\My Games\Path of Exile\"
         FileSelectFile, selectedFilePath, 3, production_Config.ini , Locate production_Config.ini, (production_Config.ini)   
@@ -245,18 +227,13 @@ globalsFromIni(_SourcePath, _VarPrefixDelim = "_")
 }
 
 
-enableGuiDrag(GuiLabel=1) {
-	WinGetPos,,,A_w,A_h,A
-	return
-	
-	GUI_Drag:
-	    SendMessage 0xA1,2
-        WinGetPos,winx,winy,winw,winh
-        guiXPos :=  % winx
-        guiYPos :=  % winy
-        Gosub, ToggleMovable
-	return
-}
+GUI_Drag:
+    SendMessage 0xA1,2
+    WinGetPos,winx,winy,winw,winh
+    guiXPos :=  % winx
+    guiYPos :=  % winy
+    Gosub, ToggleMovable
+return
 
 ; Menu Bindings
 ToggleMovable:
@@ -273,6 +250,7 @@ return
 CloseScript:
     ExitApp
 return
+
 ; Labels/Binding for the Keys
 #IfWinActive ahk_class POEWindowClass
 ; Primary Skills
