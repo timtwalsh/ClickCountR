@@ -18,6 +18,8 @@ GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExi
 
 Menu, Tray, NoStandard
 Menu, Tray, Add, Reload, ReloadScript
+Menu, tray, Add, OriginalMode, OriginalMode
+Menu, tray, Add, HorizontalMode, HorizontalMode
 Menu, tray, Add, Toogle Mover, ToggleMovable
 Menu, Tray, Add, Close, CloseScript
 Menu, tray, tip, ClickCountR - by TimWalsh ; Custom traytip
@@ -31,6 +33,7 @@ Global flaskCount := 0
 Global weaponSwap := 0
 Global skillCount := 0
 Global movable := 0
+Global guiMode = 0
 
 Gosub,LoadData 
 Sleep, 10
@@ -41,12 +44,25 @@ return
 
 ; Creates and shows the GUI
 CreateGUI:
+    if (guiMode = "1") {
+        Gosub, HorizontalGUI
+    } else { 
+        Gosub, SquareGUI
+    }
+    SetTimer, Timeout, 1000
+return
+
+SquareGUI:
     textsize := 9
     textboxH := 80
     textboxW := 64
 	BGColor = FF00FF
-	WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
     Gui, GUI_Overlay:New, -Caption +LastFound +AlwaysOnTop +ToolWindow, ClickCountR
+	WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
+    while (PoEWindowHwnd <= 0)
+	    WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
+	    sleep, 1000
+    Gui, +Parent%PoEWindowHwnd%
     Gui, Margin, 0, 0
     Gui, Font, s%textsize% q4 w700, Fontin
     Gui, Add, Picture, BackgroundTrans w99 h-1 x0 y0, %A_ScriptDir%\graymouse.png
@@ -60,12 +76,46 @@ CreateGUI:
     Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x47 y80 Center vSkill cFFFFFF, Skill`n0
     Gui, Color, %BGColor%
     WinSet, TransColor, FF00FF
-    Gui, +Parent%PoEWindowHwnd%
 	if (movable = 1) {
 	    Gui, Add, Picture, BackgroundTrans x33 y70 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
     }
     Gui, Show, X%guiXPos% Y%guiYPos%
-    SetTimer, Timeout, 1000
+return
+
+HorizontalGUI:
+    textsize := 9
+    textboxH := 28
+    textboxW := 56
+	BGColor = FF00FF
+    Gui, GUI_Overlay:New, -Caption +LastFound +AlwaysOnTop +ToolWindow, ClickCountR
+	WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
+    while (PoEWindowHwnd <= 0)
+	    WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
+	    sleep, 1000
+    Gui, +Parent%PoEWindowHwnd%
+    Gui, Margin, 0, 0
+    Gui, Font, s%textsize% q4 w700, Fontin
+    Gui, Add, Picture, BackgroundTrans x0 y0, %A_ScriptDir%\horizontal.png
+    Gui, Color, %BGColor%
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x5 y3  Center vLMB_L cFFFFFF, Primary
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x5 y16 Center vLMB cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x+9 y3 Center vRMB_L cFFFFFF, Secondary
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% xp y16 Center vRMB cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x+3 y3 Center vMMB cFFFFFF, Middle`n0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+3 y3 Center vSwap cFFFFFF, Swap`n0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+3 y3 Center vFlask cFFFFFF, Flask`n0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+3 y3 Center vSkill cFFFFFF, Skill`n0
+    WinSet, TransColor, FF00FF
+	if (movable = 1) {
+	    Gui, Add, Picture, BackgroundTrans x0 y0 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
+	    Gui, Add, Picture, BackgroundTrans x376 y0 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
+    }
+    Gui, Show, X%guiXPos% Y%guiYPos%
+return
+
+AwaitPoEHwnd:
+	WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
+    
 return
 
 Timeout:
@@ -79,7 +129,7 @@ UpdateGUI:
     numR := NumberText(rightClick)
 	GuiControl, GUI_Overlay:, RMB,%numR%
     numM := NumberText(middleClick)
-	GuiControl, GUI_Overlay:, MMB,M`n%numM%
+	GuiControl, GUI_Overlay:, MMB,Tertiary`n%numM%
     numS := NumberText(skillCount)
 	GuiControl, GUI_Overlay:, Skill,Skill`n%numS%
     numF := NumberText(flaskCount)
@@ -114,7 +164,7 @@ NumberText(number)
 }
 
 SaveData:
-    dataOut := leftClick . "," . rightClick . "," . middleClick . "," . flaskCount . "," . weaponSwap . "," . skillCount . "," . guiXPos . "," . guiYPos . "," . loadedProdPath
+    dataOut := leftClick . "," . rightClick . "," . middleClick . "," . flaskCount . "," . weaponSwap . "," . skillCount . "," . guiXPos . "," . guiYPos . "," . loadedProdPath . "," . guiMode
     file := A_ScriptDir . "\clickData.csv"
     fileOut := FileOpen(file, "rw")
     if !IsObject(fileOut)
@@ -138,7 +188,18 @@ LoadData:
         skillCount := 0 + inData[6]
         guiXPos := 0 + inData[7]
         guiYPos := 0 + inData[8]
+        guiMode := 0 + inData[10]
         filePathText := inData[9]
+    } else {
+        leftClick := 0
+        rightClick := 0
+        middleClick := 0
+        flaskCount := 0
+        weaponSwap := 0
+        skillCount := 0
+        guiXPos := 0
+        guiYPos := 0
+        guiMode := 0
     }
     if (filePathText = "") { ; if the user hasn't already had production_config located 
         ; Path should be - %USERPROFILE%\Documents\My Games\Path of Exile\
@@ -236,9 +297,23 @@ GUI_Drag:
 return
 
 ; Menu Bindings
+
+OriginalMode:
+    guiMode := 0
+    Gosub, CreateGUI
+    Gosub, UpdateGUI
+    Gosub, ToggleMovable
+return
+
+HorizontalMode:
+    guiMode := 1
+    Gosub, CreateGUI
+    Gosub, UpdateGUI
+    Gosub, ToggleMovable
+return
+
 ToggleMovable:
     movable :=  Mod(movable + 1, 2)
-    Gui, Destroy
     Gosub, CreateGUI
     Gosub, UpdateGUI
 return
