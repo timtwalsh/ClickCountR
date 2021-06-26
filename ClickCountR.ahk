@@ -17,13 +17,15 @@ GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExi
 GroupAdd, PoEWindowGrp, Path of Exile ahk_class POEWindowClass ahk_exe PathOfExile_x64_KG.exe
 
 Menu, Tray, NoStandard
-Menu, Tray, Add, Reload, ReloadScript
-Menu, tray, Add, OriginalMode, OriginalMode
-Menu, tray, Add, HorizontalMode, HorizontalMode
-Menu, tray, Add, VerticalMode, VerticalMode
-Menu, tray, Add, Integrated, IntegratedMode
+Menu, tray, Add, Original GUI, OriginalMode
+Menu, tray, Add, Horizontal GUI, HorizontalMode
+Menu, tray, Add, Vertical GUI, VerticalMode
+Menu, tray, Add, POE GUI, Integrated Mode
+Menu, Tray, Add
 Menu, tray, Add, Toogle Mover, ToggleMovable
 Menu, tray, Add, Reset Position, ResetPosition
+Menu, Tray, Add
+Menu, Tray, Add, Reload, ReloadScript
 Menu, Tray, Add, Close, CloseScript
 Menu, tray, tip, ClickCountR - by TimWalsh ; Custom traytip
 
