@@ -20,7 +20,7 @@ Menu, Tray, NoStandard
 Menu, tray, Add, Original GUI, OriginalMode
 Menu, tray, Add, Horizontal GUI, HorizontalMode
 Menu, tray, Add, Vertical GUI, VerticalMode
-Menu, tray, Add, POE GUI, Integrated Mode
+Menu, tray, Add, POE GUI, IntegratedMode
 Menu, Tray, Add
 Menu, tray, Add, Toogle Mover, ToggleMovable
 Menu, tray, Add, Reset Position, ResetPosition
@@ -54,8 +54,9 @@ CreateGUI:
     } else if (guiMode = "2") {
         Gosub, VerticalGUI
     } else if (guiMode = "3") {
-        Gosub, HorizontalGUI
+        Gosub, IntegratedGUI
     } else { 
+;        Gosub, IntegratedGUI
         Gosub, SquareGUI
     }
     SetTimer, Timeout, 1000
@@ -75,14 +76,18 @@ SquareGUI:
     Gui, Margin, 0, 0
     Gui, Font, s%textsize% q4 w700, Fontin
     Gui, Add, Picture, BackgroundTrans w99 h-1 x0 y0, %A_ScriptDir%\graymouse.png
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x11 y17 Left vLMB_L cFFFFFF, LMB
     Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x11 y32 Left vLMB cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x23 y17 Right vRMB_L cFFFFFF, RMB
     Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x23 y32 Right vRMB cFFFFFF, 0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x11 y17 Left vLMB_L cFFFFFF, L
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x23 y17 Right vRMB_L cFFFFFF, R
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x18 y45 Center vMMB cFFFFFF, M`n0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x18 y107 Center vSwap cFFFFFF, Swap`n0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x-11 y80 Center vFlask cFFFFFF, Flask`n0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x47 y80 Center vSkill cFFFFFF, Skill`n0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x18 y45 Center vMMB_L cFFFFFF, MMB
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x18 y60 Center vMMB cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x18 y107 Center vSwap_L cFFFFFF, Swap
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x18 y122 Center vSwap cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x-11 y80 Center vFlask_L cFFFFFF, Flask
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x-11 y95 Center vFlask cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x47 y80 Center vSkill_L cFFFFFF, Skill
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x47 y95 Center vSkill cFFFFFF, 0
     Gui, Color, %BGColor%
     WinSet, TransColor, FF00FF
 	if (movable = 1) {
@@ -110,10 +115,14 @@ HorizontalGUI:
     Gui, Add, Text, BackgroundTrans w64 h%textboxH% x2 y16 Center vLMB cFFFFFF, 0
     Gui, Add, Text, BackgroundTrans w64 h%textboxH% x+3 y3 Center vRMB_L cFFFFFF, RMB
     Gui, Add, Text, BackgroundTrans w64 h%textboxH% xp y16 Center vRMB cFFFFFF, 0
-    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x+0 y3 Center vMMB cFFFFFF, MMB`n0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+0 y3 Center vSwap cFFFFFF, Swap`n0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+0 y3 Center vFlask cFFFFFF, Flask`n0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+0 y3 Center vSkill cFFFFFF, Skill`n0
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x+0 y3 Center vMMB_L cFFFFFF, MMB
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% xp y16 Center vMMB cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+0 y3 Center vSwap_L cFFFFFF, Swap
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% xp y16 Center vSwap cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+0 y3 Center vFlask_L cFFFFFF, Flask
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% xp y16 Center vFlask cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+0 y3 Center vSkill_L cFFFFFF, Skill
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% xp y16 Center vSkill cFFFFFF, 0
     WinSet, TransColor, FF00FF
 	if (movable = 1) {
 	    Gui, Add, Picture, BackgroundTrans x5 y0 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
@@ -137,18 +146,81 @@ VerticalGUI:
     Gui, Font, s%textsize% q4 w700, Fontin
     Gui, Add, Picture, BackgroundTrans x10 y0, %A_ScriptDir%\vertical.png
     Gui, Color, %BGColor%
-    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 y7  Center vLMB_L cFFFFFF, LMB
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 y5  Center vLMB_L cFFFFFF, LMB
     Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 yp+14 Center vLMB cFFFFFF, 0
-    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 y+8 Center vRMB_L cFFFFFF, RMB
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 y+0 Center vRMB_L cFFFFFF, RMB
     Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 yp+14 Center vRMB cFFFFFF, 0
-    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 y+8 Center vMMB cFFFFFF, MMB`n0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x0 y+8 Center vSwap cFFFFFF, Swap`n0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x0 y+8 Center vFlask cFFFFFF, Flask`n0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x0 y+8 Center vSkill cFFFFFF, Skill`n0
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 y+0 Center vMMB_L cFFFFFF, MMB
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 yp+14 Center vMMB cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x0 y+0 Center vSwap_L cFFFFFF, Swap
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x0 yp+14 Center vSwap cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x0 y+0 Center vFlask_L cFFFFFF, Flask
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x0 yp+14 Center vFlask cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x0 y+0 Center vSkill_L cFFFFFF, Skill
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x0 yp+14 Center vSkill cFFFFFF, 0
     WinSet, TransColor, FF00FF
 	if (movable = 1) {
 	    Gui, Add, Picture, BackgroundTrans x15 y3 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
 	    Gui, Add, Picture, BackgroundTrans x15 y215 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
+    }
+    Gui, Show, X%guiXPos% Y%guiYPos%
+return
+
+IntegratedGUI:
+	WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
+    WinGetPos, winX, winY, winW, winH, ahk_id %PoEWindowHwnd%
+    textsize := 9
+    textboxH := 28
+    textboxW := 64
+    LMBLx := winW-404
+    LMBLy := winH-162
+    LMBx := winW-404
+    LMBy := winH-143
+    RMBLx := winW-295
+    RMBLy := winH-162
+    RMBx := winW-295
+    RMBy := winH-143
+    MMBLx := winW-348
+    MMBLy := winH-162
+    MMBx := winW-348
+    MMBy := winH-143
+    SwapLx := winW-64
+    SwapLy := winH-55
+    Swapx := winW-64
+    Swapy := winH-20
+    FlaskLx := winX+304
+    FlaskLy := winH-138
+    Flaskx := winX+345
+    Flasky := winH-138
+    SkillLx := winW-494
+    SkillLy := winH-122
+    Skillx := winW-458
+    Skilly := winH-122
+	BGColor = FF00FF
+    Gui, GUI_Overlay:New, -Caption +LastFound +AlwaysOnTop +ToolWindow, ClickCountR
+    while (PoEWindowHwnd <= 0)
+	    WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
+	    sleep, 1000
+    Gui, +Parent%PoEWindowHwnd%
+    Gui, Margin, 0, 0
+    Gui, Font, s%textsize% q4 w700, Fontin
+;    Gui, Add, Picture, BackgroundTrans x10 y0, %A_ScriptDir%\vertical.png
+    Gui, Color, %BGColor%
+;    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x%LMBLx%   y%LMBLy%     Center vLMB_L   cFFFFFF, LMB
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x%LMBx%    y%LMBy%      Center vLMB     cFFFFFF, 0
+;    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x%RMBLx%   y%RMBLy%     Center vRMB_L   cFFFFFF, RMB
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x%RMBx%    y%RMBy%      Center vRMB     cFFFFFF, 0
+;    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x%MMBLx%   y%MMBLy%     Center vMMB_L   cFFFFFF, MMB
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x%MMBx%    y%MMBy%      Center vMMB     cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x%SwapLx%  y%SwapLy%    Center vSwap_L  cFFFFFF, Weapon Swaps
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x%Swapx%   y%Swapy%     Center vSwap    cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x%FlaskLx% y%FlaskLy%   Center vFlask_L cFFFFFF, Flasks
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x%Flaskx%  y%Flasky%    Center vFlask   cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x%SkillLx% y%SkillLy%   Center vSkill_L cFFFFFF, Skills
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x%Skillx%  y%Skilly%    Center vSkill   cFFFFFF, 0
+    WinSet, TransColor, FF00FF
+	if (movable = 1) {
+	    movable := 0
     }
     Gui, Show, X%guiXPos% Y%guiYPos%
 return
@@ -168,13 +240,13 @@ UpdateGUI:
     numR := NumberText(rightClick)
 	GuiControl, GUI_Overlay:, RMB,%numR%
     numM := NumberText(middleClick)
-	GuiControl, GUI_Overlay:, MMB,MMB`n%numM%
+	GuiControl, GUI_Overlay:, MMB,%numM%
     numS := NumberText(skillCount)
-	GuiControl, GUI_Overlay:, Skill,Skill`n%numS%
+	GuiControl, GUI_Overlay:, Skill,%numS%
     numF := NumberText(flaskCount)
-	GuiControl, GUI_Overlay:, Flask,Flask`n%numF%
+	GuiControl, GUI_Overlay:, Flask,%numF%
     numW := NumberText(weaponSwap)
-	GuiControl, GUI_Overlay:, Swap,Swap`n%numW%
+	GuiControl, GUI_Overlay:, Swap,%numW%
 return
 
 ; Make the numbers fit in their respective positons by converting to short text
@@ -367,6 +439,7 @@ return
 
 IntegratedMode:
     guiMode := 3
+    Gosub, ResetPosition
     Gosub, CreateGUI
     Gosub, UpdateGUI
     Gosub, ToggleMovable
