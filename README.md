@@ -3,8 +3,6 @@ An AHK Script to track and display your clicks, skill, flask and weapon swap usa
 
 Supports Billions of clicks, good luck!
 
-![image](https://user-images.githubusercontent.com/37277452/123043061-1840f000-d43b-11eb-8821-ef79b34fad6c.png)
-
 # Installation
 - If you have AutoHotKey you can run the script by downloading/cloning this [repository](https://github.com/timtwalsh/ClickCountR/archive/refs/heads/master.zip). 
 - If you prefer a release version go to [releases](https://github.com/timtwalsh/ClickCountR/releases).
@@ -28,13 +26,24 @@ You may need to manually locate your production_Config.ini file - this is locate
 
 Alternately it could be in: /OneDrive/Documents/My Games/Path of Exile/production_Config.ini
 
-Full Screen Image
+# Modes
 
-![image](https://user-images.githubusercontent.com/37277452/123043360-85548580-d43b-11eb-9f85-8dcd83a30287.png)
+Original Mode 
 
-System Tray
+![image](https://user-images.githubusercontent.com/37277452/123501048-af00ed00-d685-11eb-894b-b4b7ccca97b4.png)
 
-![image](https://user-images.githubusercontent.com/37277452/123410366-985d8600-d5f2-11eb-9320-53c6d8dc87cc.png)
+Vertical Mode
+
+![image](https://user-images.githubusercontent.com/37277452/123500982-34d06880-d685-11eb-9ab8-03610b554c2a.png)
+
+Horizontal Mode
+
+![image](https://user-images.githubusercontent.com/37277452/123501010-69442480-d685-11eb-8443-83924ebf0c11.png)
+
+POE Mode
+
+![image](https://user-images.githubusercontent.com/37277452/123500965-18ccc700-d685-11eb-936c-524aa73404e0.png)
+
 
 
 # [Download](https://github.com/timtwalsh/ClickCountR/releases) 
