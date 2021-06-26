@@ -20,7 +20,10 @@ Menu, Tray, NoStandard
 Menu, Tray, Add, Reload, ReloadScript
 Menu, tray, Add, OriginalMode, OriginalMode
 Menu, tray, Add, HorizontalMode, HorizontalMode
+Menu, tray, Add, VerticalMode, VerticalMode
+Menu, tray, Add, Integrated, IntegratedMode
 Menu, tray, Add, Toogle Mover, ToggleMovable
+Menu, tray, Add, Reset Position, ResetPosition
 Menu, Tray, Add, Close, CloseScript
 Menu, tray, tip, ClickCountR - by TimWalsh ; Custom traytip
 
@@ -45,6 +48,10 @@ return
 ; Creates and shows the GUI
 CreateGUI:
     if (guiMode = "1") {
+        Gosub, HorizontalGUI
+    } else if (guiMode = "2") {
+        Gosub, VerticalGUI
+    } else if (guiMode = "3") {
         Gosub, HorizontalGUI
     } else { 
         Gosub, SquareGUI
@@ -95,20 +102,51 @@ HorizontalGUI:
     Gui, +Parent%PoEWindowHwnd%
     Gui, Margin, 0, 0
     Gui, Font, s%textsize% q4 w700, Fontin
-    Gui, Add, Picture, BackgroundTrans x0 y0, %A_ScriptDir%\horizontal.png
+    Gui, Add, Picture, BackgroundTrans x5 y2, %A_ScriptDir%\horizontal.png
     Gui, Color, %BGColor%
-    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x5 y3  Center vLMB_L cFFFFFF, Primary
-    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x5 y16 Center vLMB cFFFFFF, 0
-    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x+9 y3 Center vRMB_L cFFFFFF, Secondary
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x2 y3  Center vLMB_L cFFFFFF, LMB
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x2 y16 Center vLMB cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x+3 y3 Center vRMB_L cFFFFFF, RMB
     Gui, Add, Text, BackgroundTrans w64 h%textboxH% xp y16 Center vRMB cFFFFFF, 0
-    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x+3 y3 Center vMMB cFFFFFF, Middle`n0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+3 y3 Center vSwap cFFFFFF, Swap`n0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+3 y3 Center vFlask cFFFFFF, Flask`n0
-    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+3 y3 Center vSkill cFFFFFF, Skill`n0
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x+0 y3 Center vMMB cFFFFFF, MMB`n0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+0 y3 Center vSwap cFFFFFF, Swap`n0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+0 y3 Center vFlask cFFFFFF, Flask`n0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x+0 y3 Center vSkill cFFFFFF, Skill`n0
     WinSet, TransColor, FF00FF
 	if (movable = 1) {
-	    Gui, Add, Picture, BackgroundTrans x0 y0 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
-	    Gui, Add, Picture, BackgroundTrans x376 y0 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
+	    Gui, Add, Picture, BackgroundTrans x5 y0 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
+	    Gui, Add, Picture, BackgroundTrans x332 y0 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
+    }
+    Gui, Show, X%guiXPos% Y%guiYPos%
+return
+
+VerticalGUI:
+    textsize := 9
+    textboxH := 28
+    textboxW := 64
+	BGColor = FF00FF
+    Gui, GUI_Overlay:New, -Caption +LastFound +AlwaysOnTop +ToolWindow, ClickCountR
+	WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
+    while (PoEWindowHwnd <= 0)
+	    WinGet, PoEWindowHwnd, ID, ahk_group PoEWindowGrp
+	    sleep, 1000
+    Gui, +Parent%PoEWindowHwnd%
+    Gui, Margin, 0, 0
+    Gui, Font, s%textsize% q4 w700, Fontin
+    Gui, Add, Picture, BackgroundTrans x10 y0, %A_ScriptDir%\vertical.png
+    Gui, Color, %BGColor%
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 y7  Center vLMB_L cFFFFFF, LMB
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 yp+14 Center vLMB cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 y+8 Center vRMB_L cFFFFFF, RMB
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 yp+14 Center vRMB cFFFFFF, 0
+    Gui, Add, Text, BackgroundTrans w64 h%textboxH% x0 y+8 Center vMMB cFFFFFF, MMB`n0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x0 y+8 Center vSwap cFFFFFF, Swap`n0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x0 y+8 Center vFlask cFFFFFF, Flask`n0
+    Gui, Add, Text, BackgroundTrans w%textboxW% h%textboxH% x0 y+8 Center vSkill cFFFFFF, Skill`n0
+    WinSet, TransColor, FF00FF
+	if (movable = 1) {
+	    Gui, Add, Picture, BackgroundTrans x15 y3 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
+	    Gui, Add, Picture, BackgroundTrans x15 y215 w32 h32 cFFFFFF gGUI_Drag, %A_ScriptDir%\mover.png
     }
     Gui, Show, X%guiXPos% Y%guiYPos%
 return
@@ -122,14 +160,13 @@ Timeout:
     Gosub, SaveData
 return
 
-
 UpdateGUI:
     numL := NumberText(leftClick)
 	GuiControl, GUI_Overlay:, LMB,%numL%
     numR := NumberText(rightClick)
 	GuiControl, GUI_Overlay:, RMB,%numR%
     numM := NumberText(middleClick)
-	GuiControl, GUI_Overlay:, MMB,Tertiary`n%numM%
+	GuiControl, GUI_Overlay:, MMB,MMB`n%numM%
     numS := NumberText(skillCount)
 	GuiControl, GUI_Overlay:, Skill,Skill`n%numS%
     numF := NumberText(flaskCount)
@@ -296,6 +333,13 @@ GUI_Drag:
     Gosub, ToggleMovable
 return
 
+
+ResetPosition:
+    guiXPos :=  0
+    guiYPos :=  0
+    Gosub, ToggleMovable
+return
+
 ; Menu Bindings
 
 OriginalMode:
@@ -307,6 +351,20 @@ return
 
 HorizontalMode:
     guiMode := 1
+    Gosub, CreateGUI
+    Gosub, UpdateGUI
+    Gosub, ToggleMovable
+return
+
+VerticalMode:
+    guiMode := 2
+    Gosub, CreateGUI
+    Gosub, UpdateGUI
+    Gosub, ToggleMovable
+return
+
+IntegratedMode:
+    guiMode := 3
     Gosub, CreateGUI
     Gosub, UpdateGUI
     Gosub, ToggleMovable
