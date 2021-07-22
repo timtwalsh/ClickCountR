@@ -365,6 +365,11 @@ LoadData:
             mod := modId_to_char[keyWithMod2]
         }
         Hotkey, % "~" . mod . key . " up", %A_LoopField%, On ; Bind the hotkey to the label with passthrough
+        if (A_LoopField = "use_bound_skill1") {
+          Hotkey, % "~" . "!" . key . " up", %A_LoopField%, On ; Bind mods for left click
+          Hotkey, % "~" . "^" . key . " up", %A_LoopField%, On
+          Hotkey, % "~" . "+" . key . " up", %A_LoopField%, On
+        }
     }
 return
 
